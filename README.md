@@ -35,11 +35,14 @@ Open `getting-started.ipynb` to see examples of:
 ## Project Structure
 
 ```
-.
-├── getting-started.ipynb    # Tutorial notebook with data loading examples
-├── README.md                # This file
-├── environment.yml          # Conda environment (if using)
-└── requirements.txt         # Python dependencies (if using pip)
+SoccerImpectHackathon/
+├── getting-started.ipynb        # Tutorial notebook
+├── environment.yml              # Conda environment
+├── requirements.txt             # Python dependencies
+├── .gitignore                   # Git ignore rules
+├── LICENSE                      # MIT License
+├── README.md                    # This file
+└── CONTRIBUTING.md              # Contribution guidelines
 ```
 
 ## Deliverables (Due Friday, February 27, 2026)
