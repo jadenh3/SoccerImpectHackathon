@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from mplsoccer import Pitch
 
-def plot_player(df, player_id):
+def pass_map(df, player_id):
     fig,ax = plt.subplots(figsize = (13.5, 8))
     fig.set_facecolor('#22312b')
     ax.patch.set_facecolor('#22312b')
@@ -11,7 +11,8 @@ def plot_player(df, player_id):
 
 
     for x in range(len(df)):
-        if df['event_type'][x] == 'PASS' & df['player_id'][x] == player_id:
+        player_id = int(player_id)
+        if df['event_type'][x] == 'PASS' and df['player_id'][x] == player_id:
             if df['success'][x] == True:
                 ax.plot(
                     [df['coordinates_x'][x], df['end_coordinates_x'][x]],
@@ -36,6 +37,5 @@ def plot_player(df, player_id):
                     color='red'
                 )
 
-
-    plt.title('Pass Map - Player ID {player_id}', color='white', fontsize=20)
+    plt.title(f'Pass Map - Player ID {player_id}', color='white', fontsize=20)
             
