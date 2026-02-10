@@ -6,101 +6,29 @@
 
 ## Overview
 
-This repository provides starter code and instructions for the Soccer Data Analytics Hackathon. You'll work with **IMPECT Open Data** containing 306 German Bundesliga matches from the 2023/24 season to tackle one of two challenge prompts.
+This repository outlines our starter code for our shot decision quality metric. We used a variety of different attacking features such as shot angle, trajectory, position, and shot speed to determine the metric. Shot deciison quality (SDQ) can be used to determine what makes a "good" shot, with it being given a quantitative value on our own scale. 
+
+## Team Members
+
+Zoran Shamsi - zoranshamsi@gmail.com
+Jaden Hu - jadenhu2005@gmail.com
+Rishik Kelkar - rishikk871@gmail.com
+Herchelle Jadhav - jadhavherchelle@gmail.com
+
+## Project Links
+
+Google Slides (to be created) - https://docs.google.com/presentation/d/1K5Xf7x6dqUS2SBo25WHKKB_SDN9cPxS8eFPImQ93QHE/edit?usp=sharing
+Github Repo - https://github.com/jadenh3/SoccerImpectHackathon
+
+## Tech Stack
+- Python
+- Impact OPEN Data
+- Kloppy, pandas, mpl soccer
+
 
 ## Challenge Prompts (Choose One)
 
-### Option A: Starting Eleven Lineup Construction
-Recommend an optimal starting eleven and/or substitution plan to maximize team cohesion and ball progression. Build a player-to-player pass network, analyze network structure, and compare alternative lineups with clear visualizations.
 
 ### Option B: Transparent Player Valuation Metric
 Define an interpretable attacking or defensive metric using event data. Create a metric definition, produce a leaderboard comparing players, present a case study, and discuss limitations.
 
-## Quick Start
-
-### 1. Installation (within Jupyter notebook)
-
-```bash
-!pip install "kloppy>=3.18.0" polars pyarrow
-```
-
-### 2. Explore the Notebook
-
-Open `getting-started.ipynb` to see examples of:
-- Loading matches and squad data
-- Filtering for specific event types (passes, shots)
-- Transforming coordinate systems
-- Exporting to Polars/Pandas DataFrames
-
-## Project Structure
-
-```
-SoccerImpectHackathon/
-├── getting-started.ipynb        # Tutorial notebook
-├── environment.yml              # Conda environment
-├── requirements.txt             # Python dependencies
-├── .gitignore                   # Git ignore rules
-├── LICENSE                      # MIT License
-├── README.md                    # This file
-└── CONTRIBUTING.md              # Contribution guidelines
-```
-
-## Deliverables (Due Friday, February 27, 2026)
-
-1. **Slide deck** (PDF, max 8 slides) with clear visualizations
-2. **GitHub repository** with:
-   - Clean, reproducible code
-   - `README.md` explaining your approach
-   - `environment.yml` or `requirements.txt`
-   - Open-source license (MIT or Apache 2.0)
-
-## Timeline
-
-| Milestone | Date |
-|-----------|------|
-| Release & Data Primer | Monday, November 3, 2025 |
-| Registration Deadline | Wednesday, December 31, 2025 |
-| Checkpoint (draft slides/repo) | Monday, February 2, 2026 |
-| Final Work Session & Judging | Friday, February 27, 2026 |
-| Industry Talks & Awards | Saturday, February 28, 2026 |
-
-## Suggested Tools
-
-- **Python:** kloppy, polars, pandas, numpy, mplsoccer, databallpy, networkx
-- **R:** tidyverse, igraph
-- Any language is acceptable as long as your work is reproducible
-
-## Resources
-
-- [Kloppy Documentation](https://kloppy.pysport.org/)
-- [IMPECT Open Data](https://github.com/ImpectAPI/open-data)
-- [PySport](https://pysport.org/)
-
-## License & Ethics
-
-- IMPECT Open Data is for **non-commercial use only**
-- Cite all sources appropriately
-- If using AI tools, document where and how they were used
-  - For example: This .README was generated with the help of Claude Sonnet 4.5
-- Be transparent about limitations in your methodology
-
-## Judging Criteria (100 points)
-
-- Problem framing & soccer context (10 pts)
-- Data engineering & correctness (15 pts)
-- Methodology quality (15 pts)
-- Validation & robustness (15 pts)
-- Results & insight (15 pts)
-- Communication & visualization (15 pts)
-- Reproducibility & ethics (15 pts)
-
-## Contact
-
-Questions? Email **northeasternsportsanalytics@gmail.com**
-
----
-
-**Good luck and happy hacking!** ⚽📊
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
