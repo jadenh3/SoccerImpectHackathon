@@ -8,17 +8,23 @@
 
 This repository outlines our starter code for our shot decision quality metric. We used a variety of different attacking features such as shot angle, trajectory, position, and shot speed to determine the metric. Shot deciison quality (SDQ) can be used to determine what makes a "good" shot, with it being given a quantitative value on our own scale. 
 
+
 ## Team Members
 
-Zoran Shamsi - zoranshamsi@gmail.com
-Jaden Hu - jadenhu2005@gmail.com
-Rishik Kelkar - rishikk871@gmail.com
-Herchelle Jadhav - jadhavherchelle@gmail.com
+| Name             | Personal Email              |
+|------------------|---------------------------------|
+| Jaden Hu         | jadenhu2005@gmail.com           |
+| Zoran Shamsi     | zoranshamsi@gmail.com           |
+| Herchelle Jadhav | jadhavherchelle@gmail.com       |
+| Rishik Kelkar    | rishikk871@gmail.com            |
 
 ## Project Links
 
-Google Slides (to be created) - https://docs.google.com/presentation/d/1K5Xf7x6dqUS2SBo25WHKKB_SDN9cPxS8eFPImQ93QHE/edit?usp=sharing
-Github Repo - https://github.com/jadenh3/SoccerImpectHackathon
+- **Google Slides**:  
+  https://docs.google.com/presentation/d/1K5Xf7x6dqUS2SBo25WHKKB_SDN9cPxS8eFPImQ93QHE/edit?usp=sharing
+
+- **GitHub Repo**:  
+  https://github.com/jadenh3/SoccerImpectHackathon
 
 ## Tech Stack
 - Python
