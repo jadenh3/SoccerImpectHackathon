@@ -27,6 +27,14 @@ This differs from a stat like expected goals (xG) as xG measures the probability
 - **GitHub Repo**:  
   https://github.com/jadenh3/SoccerImpectHackathon
 
+
+## Hackathon Useful Links
+
+- **Hackathon instructions**: 
+  https://sites.google.com/view/neusportsanalytics/hackathon?
+- **GitHub template repo**: 
+  https://github.com/northeasternsportsanalytics-droid/SoccerImpectHackathon
+
 ## Tech Stack
 - Python
 - Impact OPEN Data
