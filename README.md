@@ -10,7 +10,6 @@ This repository outlines our starter code for our shot decision quality metric. 
 
 This differs from a stat like expected goals (xG) as xG measures the probability of a shot ending up in a goal, whilst SDQ measures the quality of the decision to shoot. xG helps to answer the question "How likely is this shot to end up in a goal" versus SDQ helps to answer "Was taking this shot the right decision".
 
-
 ## Team Members
 
 | Name             | Personal Email              |
@@ -39,19 +38,17 @@ This differs from a stat like expected goals (xG) as xG measures the probability
 ## Tech Stack
 - Python
 - Impact OPEN Data
-- Kloppy, pandas, mpl soccer
-
-## Challenge Tasks
-
-- **Logistic Regression Model**
-  Predict what shots result in a goal, create a confusion matrix and other associated evalutation metrics
-
-- **SDQ Implementation**
-  Implement our SDQ class into the practical data and get quantitative values back. Test how accurate SDQ value by observing its relationship with result (goal or not)
-
+- Kloppy, pandas, mplsoccer
 
 
 ## Challenge Prompts (Choose One)
+- Logistic Regression Model Predict what shots result in a goal, create a confusion matrix and other associated evalutation metrics
+
+- SDQ Implementation Implement our SDQ class into the practical data and get quantitative values back. Test how accurate SDQ value by observing its relationship with result (goal or not)
+
+- Add features and visualizations to shot anlaysis
+
+- Create the dashboard 
 
 
 ### Option B: Transparent Player Valuation Metric
