@@ -31,6 +31,15 @@ This repository outlines our starter code for our shot decision quality metric. 
 - Impact OPEN Data
 - Kloppy, pandas, mpl soccer
 
+## Challenge Tasks
+
+- **Logistic Regression Model**
+  Predict what shots result in a goal, create a confusion matrix and other associated evalutation metrics
+
+- **SDQ Implementation**
+  Implement our SDQ class into the practical data and get quantitative values back. Test how accurate SDQ value by observing its relationship with result (goal or not)
+
+
 
 ## Challenge Prompts (Choose One)
 
