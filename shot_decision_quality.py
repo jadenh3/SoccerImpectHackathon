@@ -262,7 +262,7 @@ class ShotDecisionQuality:
             else:
                 x_from_goal = x
             if x_from_goal <= (120 - self.zones['penalty_box']):
-                shot_details['shots_in_box'] += 1:
+                shot_details['shots_in_box'] += 1
         
         shot_details['avg_distance'] = np.mean(distances) if len(distances) > 0 else 0
         shot_details['avg_angle'] = np.mean(angles) if len(angles) > 0 else 0
