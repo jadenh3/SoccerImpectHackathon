@@ -12,20 +12,20 @@ class ShotDecisionQuality:
         self.goal_width = 8
         
         self.zones = {
-            'six_yard_box': 114,
-            'penalty_box': 102,
-            'danger_zone': 96,
-            'edge_of_box': 88,
-            'long_range': 75
+            'six_yard_box': 6,
+            'penalty_box': 18,
+            'danger_zone': 24,
+            'edge_of_box': 30,
+            'long_range': 45
         }
     
     def calculate_distance_to_goal(self, x, y):
         if x >= 60:
             goal_x = 120
-            goal_y = 60
-        else: 
+            goal_y = self.pitch_width / 2
+        else:
             goal_x = 0
-            goal_y = 40
+            goal_y = self.pitch_width / 2
 
         distance = np.sqrt((x - goal_x)**2 + (y - goal_y)**2)
         return distance
@@ -57,18 +57,23 @@ class ShotDecisionQuality:
         else: 
             x_from_goal = x
         
-        if x_from_goal <= (120 - self.zones['six_yard_box']):
+        if x_from_goal <= self.zones['six_yard_box']:
             distance_score = 100
-        elif x_from_goal <= (120 - self.zones['penalty_box']):
-            distance_score = 90 - (x_from_goal - (120 - self.zones['six_yard_box'])) * 1.5
-        elif x_from_goal <= (120 - self.zones['danger_zone']):
-            distance_score = 75 - (x_from_goal - (120 - self.zones['penalty_box'])) * 2.5
-        elif x_from_goal <= (120 - self.zones['edge_of_box']):
-            distance_score = 60 - (x_from_goal - (120 - self.zones['danger_zone'])) * 2
-        elif x_from_goal <= (120 - self.zones['long_range']):
-            distance_score = 40 - (x_from_goal - (120 - self.zones['edge_of_box'])) * 1.5
+
+        elif x_from_goal <= self.zones['penalty_box']:
+            distance_score = 90 - (x_from_goal - self.zones['six_yard_box']) * 1.5
+
+        elif x_from_goal <= self.zones['danger_zone']:
+            distance_score = 75 - (x_from_goal - self.zones['penalty_box']) * 2.5
+
+        elif x_from_goal <= self.zones['edge_of_box']:
+            distance_score = 60 - (x_from_goal - self.zones['danger_zone']) * 2
+
+        elif x_from_goal <= self.zones['long_range']:
+            distance_score = 40 - (x_from_goal - self.zones['edge_of_box']) * 1.5
+
         else:
-            distance_score = max(10, 40 - (x_from_goal - (120 - self.zones['long_range'])) * 1.5)
+            distance_score = max(10, 40 - (x_from_goal - self.zones['long_range']) * 1.5)
         
         if angle >= 25:
             angle_score = 100
@@ -98,18 +103,10 @@ class ShotDecisionQuality:
         
         return min(100, base_score)
     
-    def calculate_pressure_score(self, under_pressure, success=False):
-        if under_pressure is None or under_pressure == False:
-            return 95 if success else 75
-        
-        base_score = 60
-        
-        if success:
-            base_score += 25
-        
-        return max(30, min(100, base_score))
+    def calculate_pressure_score(self, under_pressure):
+        return 60 if under_pressure else 85
     
-    def calculate_shot_type_score(self, body_part, x, angle, success=False):
+    def calculate_shot_type_score(self, body_part, x, angle):
         base_score = 70
 
         if x >= 60:
@@ -117,28 +114,25 @@ class ShotDecisionQuality:
         else: 
             x_from_goal = x
         
-        if x_from_goal <= (120 - self.zones['six_yard_box']):
+        if x_from_goal <= self.zones['six_yard_box']:
             base_score = 85
             if body_part == 'HEAD':
                 base_score = 90
     
-        elif x_from_goal <= (120 - self.zones['penalty_box']):
+        elif x_from_goal <= self.zones['penalty_box']:
             if body_part in ['RIGHT_FOOT', 'LEFT_FOOT']:
                 base_score = 85
             elif body_part == 'HEAD':
                 base_score = 80
     
-        elif x_from_goal > (120 - self.zones['edge_of_box']):
+        elif x_from_goal > self.zones['edge_of_box']:
             if body_part in ['RIGHT_FOOT', 'LEFT_FOOT']:
                 base_score = 70
             else:
                 base_score = 50
     
-        if angle < 8 and x_from_goal > (120 - self.zones['penalty_box']):
+        if angle < 8 and x_from_goal > self.zones['penalty_box']:
             base_score -= 15
-        
-        if success:
-            base_score += 15
         
         return min(100, base_score)
     
@@ -148,13 +142,13 @@ class ShotDecisionQuality:
         else:
             x_from_goal = x
 
-        if x <= (120 - self.zones['six_yard_box']):
+        if x_from_goal <= self.zones['six_yard_box']:
             base_xg = 0.50
-        elif x <= (120 - self.zones['penalty_box']):
+        elif x_from_goal <= self.zones['penalty_box']:
             base_xg = 0.25
-        elif x <= (120 - self.zones['danger_zone']):
+        elif x_from_goal <= self.zones['danger_zone']:
             base_xg = 0.12
-        elif x <= (120 - self.zones['edge_of_box']):
+        elif x_from_goal <= self.zones['edge_of_box']:
             base_xg = 0.06
         else:
             base_xg = 0.03
@@ -181,17 +175,15 @@ class ShotDecisionQuality:
         is_set_piece = shot_event.get('set_piece_type') is not None and pd.notna(shot_event.get('set_piece_type'))
         success = shot_event.get('success', False)
         result = shot_event.get('result', '')
-        
-        if result == 'GOAL':
-            success = True
+ 
         
         location_score = self.calculate_location_score(x, y)
         distance = self.calculate_distance_to_goal(x, y)
         angle = self.calculate_shot_angle(x, y)
         
         timing_score = self.calculate_timing_score(is_set_piece=is_set_piece)
-        pressure_score = self.calculate_pressure_score(under_pressure, success=success)
-        shot_type_score = self.calculate_shot_type_score(body_part, x, angle, success)
+        pressure_score = self.calculate_pressure_score(under_pressure)
+        shot_type_score = self.calculate_shot_type_score(body_part, x, angle)
         expected_value = self.calculate_expected_value(location_score, x, angle)
         
         sdq = (
@@ -201,8 +193,6 @@ class ShotDecisionQuality:
             timing_score * 0.15
         )
         
-        if success:
-            sdq = min(100, sdq * 1.1)
         
         return {
             'sdq': sdq,
@@ -261,7 +251,7 @@ class ShotDecisionQuality:
                 x_from_goal = 120 - x
             else:
                 x_from_goal = x
-            if x_from_goal <= (120 - self.zones['penalty_box']):
+            if x_from_goal <= self.zones['penalty_box']:
                 shot_details['shots_in_box'] += 1
         
         shot_details['avg_distance'] = np.mean(distances) if len(distances) > 0 else 0
