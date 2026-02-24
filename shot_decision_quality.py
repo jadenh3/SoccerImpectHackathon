@@ -319,6 +319,8 @@ def generate_shot_leaderboard(df, min_shots=3):
     
     leaderboard = pd.DataFrame(player_stats)
     leaderboard = leaderboard.sort_values('overall_sdq', ascending=False)
+
+    leaderboard['player_id'] = leaderboard['player_id'].astype(int)
     
     return leaderboard
 
