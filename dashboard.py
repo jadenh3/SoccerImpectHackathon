@@ -124,7 +124,7 @@ with st.spinner("Loading Bundesliga data... This may take a minute on first load
 # ============================================================================
 
 st.markdown('<p class="main-header">⚽ Shot Decision Quality Analysis</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Bundesliga 2023/24 Season | Team: Big Goals Big Dreams</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Bundesliga 2023/24 Season</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 # ============================================================================
@@ -773,9 +773,4 @@ with tab3:
 # ============================================================================
 
 st.markdown("---")
-st.markdown("""
-<div style='text-align: center; color: #666; padding: 2rem 0;'>
-    <p><strong>Big Goals Big Dreams</strong> | NEU Sports Analytics Hackathon 2026</p>
-    <p>Data: IMPECT Open Data (Bundesliga 2023/24) | Metric: Shot Decision Quality (SDQ)</p>
-</div>
-""", unsafe_allow_html=True)
+st.caption("Data: IMPECT Open Data (Bundesliga 2023/24) | Metric: Shot Decision Quality (SDQ)")
