@@ -2,12 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import numpy as np
 
 # Page configuration
 st.set_page_config(
     page_title="SDQ Analysis - Bundesliga 2023/24",
-    page_icon="⚽",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -41,55 +39,12 @@ def load_player_data():
     """
     Load player leaderboard data from SDQ calculations
     """
-    try:
-        from data_loader import get_leaderboard
-        
-        # Load the leaderboard
-        df = get_leaderboard(competition_id=743, min_shots=1)
-        
-        return df
-        
-    except (ImportError, FileNotFoundError, Exception) as e:
-        st.warning(f"Could not load real data: {e}. Using demo data for testing.")
-        
-        # Demo data for testing
-        np.random.seed(42)
-        demo_data = pd.DataFrame({
-            'player_id': range(1, 101),
-            'player_name': [f'Player {i}' for i in range(1, 101)],
-            'team': np.random.choice(['Bayern Munich', 'Borussia Dortmund', 'RB Leipzig', 
-                                     'Bayer Leverkusen', 'Union Berlin', 'SC Freiburg'], 100),
-            'position': np.random.choice(['Forward', 'Midfielder', 'Defender'], 100, p=[0.4, 0.4, 0.2]),
-            'overall_sdq': np.random.uniform(45, 92, 100),
-            'avg_expected_value': np.random.uniform(25, 85, 100),
-            'total_shots': np.random.randint(3, 60, 100),
-            'goals': np.random.randint(0, 25, 100),
-            'conversion_rate': np.random.uniform(3, 45, 100),
-            'avg_location_score': np.random.uniform(45, 95, 100),
-            'avg_pressure_score': np.random.uniform(40, 90, 100),
-            'avg_shot_type_score': np.random.uniform(45, 92, 100),
-            'avg_timing_score': np.random.uniform(50, 88, 100),
-            'consistency': np.random.uniform(55, 98, 100),
-            'avg_distance': np.random.uniform(8, 25, 100),
-            'avg_angle': np.random.uniform(5, 35, 100),
-        })
-        
-        return demo_data
-
-@st.cache_data
-def load_shot_level_data():
-    try:
-        from data_loader import load_all_shots
-        from shot_decision_quality import create_shot_analysis
-        
-        shots = load_all_shots(competition_id=743)
-        shots_with_sdq = create_shot_analysis(shots)
-        
-        return shots_with_sdq
-        
-    except (ImportError, FileNotFoundError, Exception) as e:
-        st.warning("Individual shot data not available yet.")
-        return pd.DataFrame()
+    from data_loader import get_leaderboard
+    
+    # Load the leaderboard
+    df = get_leaderboard(competition_id=743, min_shots=1)
+    
+    return df
 
 # ============================================================================
 # LOAD DATA
@@ -110,7 +65,7 @@ st.markdown("---")
 # SIDEBAR - GLOBAL FILTERS
 # ============================================================================
 
-st.sidebar.header("🎯 Filters")
+st.sidebar.header("Filters")
 
 # Minimum shots filter
 min_shots_global = st.sidebar.slider(
@@ -158,7 +113,7 @@ st.sidebar.info(f"**{len(filtered_df)}** players match current filters")
 # CREATE TABS
 # ============================================================================
 
-tab1, tab2, tab3 = st.tabs(["📊 Leaderboard", "🔍 Player Comparison", "📈 SDQ vs xG Analysis"])
+tab1, tab2, tab3 = st.tabs(["Leaderboard", "Player Comparison", "SDQ vs Conversion % Analysis"])
 
 # ============================================================================
 # TAB 1: LEADERBOARD
@@ -173,12 +128,11 @@ with tab1:
     with col_sort:
         sort_by = st.selectbox(
             "Sort By",
-            options=['overall_sdq', 'avg_expected_value', 'goals', 'conversion_rate', 'total_shots', 'consistency'],
+            options=['overall_sdq', 'goals', 'conversion_rate', 'total_shots', 'consistency'],
             format_func=lambda x: {
                 'overall_sdq': 'SDQ Score',
-                'avg_expected_value': 'Expected Value',
                 'goals': 'Goals',
-                'conversion_rate': 'Conversion Rate',
+                'conversion_rate': 'Conversion Rate (%)',
                 'total_shots': 'Total Shots',
                 'consistency': 'Consistency'
             }[x]
@@ -204,7 +158,7 @@ with tab1:
     
     with col5:
         avg_conversion = (display_df['goals'].sum() / display_df['total_shots'].sum() * 100) if display_df['total_shots'].sum() > 0 else 0
-        st.metric("Avg Conversion", f"{avg_conversion:.1f}%")
+        st.metric("Avg Conversion %", f"{avg_conversion:.1f}%")
     
     st.markdown("---")
     
@@ -216,7 +170,7 @@ with tab1:
     table_df.insert(0, 'Rank', range(1, len(table_df) + 1))
     
     # Round numeric columns
-    numeric_cols = ['overall_sdq', 'avg_expected_value', 'conversion_rate', 'consistency']
+    numeric_cols = ['overall_sdq', 'conversion_rate', 'consistency']
     for col in numeric_cols:
         if col in table_df.columns:
             table_df[col] = table_df[col].round(1)
@@ -390,7 +344,7 @@ with tab2:
         st.markdown("---")
         
         # Summary stats comparison
-        st.subheader("📊 Key Statistics Comparison")
+        st.subheader("Key Statistics Comparison")
         
         # Create metrics grid
         metrics_to_show = ['overall_sdq', 'total_shots', 'goals', 'conversion_rate', 'consistency']
@@ -402,7 +356,7 @@ with tab2:
                 player_data = comparison_df[comparison_df['player_name'] == player_name].iloc[0]
                 value = player_data[metric]
                 
-                if metric in ['conversion_rate', 'overall_sdq', 'avg_expected_value', 'consistency']:
+                if metric in ['conversion_rate', 'overall_sdq', 'consistency']:
                     formatted_value = f"{value:.1f}"
                 else:
                     formatted_value = f"{int(value)}"
@@ -413,7 +367,7 @@ with tab2:
                     else:
                         # Calculate delta compared to player 1
                         delta = value - comparison_df[comparison_df['player_name'] == selected_players[0]].iloc[0][metric]
-                        if metric in ['conversion_rate', 'overall_sdq', 'avg_expected_value', 'consistency']:
+                        if metric in ['conversion_rate', 'overall_sdq', 'consistency']:
                             delta_str = f"{delta:+.1f}"
                         else:
                             delta_str = f"{int(delta):+d}"
@@ -422,7 +376,7 @@ with tab2:
         st.markdown("---")
         
         # Component comparison - Radar chart
-        st.subheader("🎯 SDQ Component Profile")
+        st.subheader("SDQ Component Profile")
         
         fig_radar = go.Figure()
         
@@ -465,7 +419,7 @@ with tab2:
         st.markdown("---")
         
         # Detailed comparison table
-        st.subheader("📋 Detailed Statistics")
+        st.subheader("Detailed Statistics")
         
         detail_cols = ['player_name', 'team', 'position', 'overall_sdq','total_shots', 
                        'goals', 'conversion_rate', 'avg_distance', 'avg_angle',
@@ -493,21 +447,21 @@ with tab2:
         st.warning("No players selected for comparison. Please select at least 2 players.")
 
 # ============================================================================
-# TAB 3: SDQ VS XG ANALYSIS
+# TAB 3: SDQ VS CONVERSION RATE ANALYSIS
 # ============================================================================
 
 with tab3:
-    st.header("Shot Decision Quality vs Expected Goals Analysis")
+    st.header("Shot Decision Quality vs Conversion Rate Analysis")
     
     st.markdown("""
-    This visualization reveals the relationship between **Shot Decision Quality (SDQ)** and **Expected Value (xG)**.
+    This visualization reveals the relationship between **Shot Decision Quality (SDQ)** and **Conversion Rate**.
     
     ### Four Quadrants Explained:
     
-    - **🌟 Top-Right (Elite Shots):** High xG + High SDQ = Players who find great positions AND execute well
-    - **💪 Top-Left (Making the Most):** Low xG + High SDQ = Creative finishers who maximize tough chances
-    - **⚠️ Bottom-Right (Wasted Opportunities):** High xG + Low SDQ = Players who get into good positions but waste them
-    - **🚫 Bottom-Left (Forced Shots):** Low xG + Low SDQ = Desperate attempts from poor positions
+    - Top-Right (Elite Shots): High Conversion Rate + High SDQ = Players who find great positions AND execute well
+    - Top-Left (Making the Most): Low Conversion Rate + High SDQ = Creative finishers who maximize tough chances
+    - Bottom-Right (Wasted Opportunities): High Conversion Rate + Low SDQ = Players who get into good positions but waste them
+    - Bottom-Left (Forced Shots): Low Conversion Rate + Low SDQ = Desperate attempts from poor positions
     """)
     
     st.markdown("---")
@@ -527,33 +481,14 @@ with tab3:
         )
     
     with col2:
-        size_by = st.selectbox(
-            "Size Points By",
-            options=['total_shots', 'goals', 'uniform'],
-            format_func=lambda x: {
-                'total_shots': 'Total Shots',
-                'goals': 'Goals Scored',
-                'uniform': 'Uniform Size'
-            }[x]
-        )
-    
-    with col3:
         show_labels = st.checkbox("Show Player Names", value=False)
     
     # Calculate quadrant thresholds (median values)
     sdq_threshold = filtered_df['overall_sdq'].median()
-    xg_threshold = filtered_df['avg_expected_value'].median()
+    conv_threshold = filtered_df['conversion_rate'].median()
     
     # Create scatter plot
     fig_scatter = go.Figure()
-    
-    # Determine size array
-    if size_by == 'uniform':
-        size_array = [10] * len(filtered_df)
-    else:
-        size_array = filtered_df[size_by]
-        # Normalize sizes for better visualization
-        size_array = (size_array - size_array.min()) / (size_array.max() - size_array.min()) * 40 + 10
     
     # Color settings
     if color_by in ['position', 'team']:
@@ -563,17 +498,16 @@ with tab3:
         
         for category in unique_categories:
             category_data = filtered_df[filtered_df[color_by] == category]
-            category_sizes = [size_array.iloc[i] for i in category_data.index]
             
             fig_scatter.add_trace(go.Scatter(
-                x=category_data['avg_expected_value'],
+                x=category_data['conversion_rate'],
                 y=category_data['overall_sdq'],
                 mode='markers+text' if show_labels else 'markers',
                 name=str(category),
                 text=category_data['player_name'] if show_labels else None,
                 textposition="top center",
                 marker=dict(
-                    size=category_sizes,
+                    size=14,
                     color=color_map[category],
                     line=dict(width=1, color='white'),
                     opacity=0.7
@@ -582,7 +516,7 @@ with tab3:
                              'Team: %{customdata[1]}<br>' +
                              'Position: %{customdata[2]}<br>' +
                              'SDQ: %{y:.1f}<br>' +
-                             'xG: %{x:.1f}<br>' +
+                             'Conversion %: %{x:.1f}<br>' +
                              'Goals: %{customdata[3]}<br>' +
                              'Shots: %{customdata[4]}<br>' +
                              '<extra></extra>',
@@ -591,13 +525,13 @@ with tab3:
     else:
         # Continuous coloring (goals)
         fig_scatter.add_trace(go.Scatter(
-            x=filtered_df['avg_expected_value'],
+            x=filtered_df['conversion_rate'],
             y=filtered_df['overall_sdq'],
             mode='markers+text' if show_labels else 'markers',
             text=filtered_df['player_name'] if show_labels else None,
             textposition="top center",
             marker=dict(
-                size=size_array,
+                size=14,
                 color=filtered_df['goals'],
                 colorscale='Viridis',
                 showscale=True,
@@ -609,7 +543,7 @@ with tab3:
                          'Team: %{customdata[1]}<br>' +
                          'Position: %{customdata[2]}<br>' +
                          'SDQ: %{y:.1f}<br>' +
-                         'xG: %{x:.1f}<br>' +
+                         'Conversion %: %{x:.1f}<br>' +
                          'Goals: %{customdata[3]}<br>' +
                          'Shots: %{customdata[4]}<br>' +
                          '<extra></extra>',
@@ -628,30 +562,30 @@ with tab3:
     )
     
     fig_scatter.add_vline(
-        x=xg_threshold,
+        x=conv_threshold,
         line_dash="dash",
         line_color="gray",
         opacity=0.5,
-        annotation_text=f"Median xG: {xg_threshold:.1f}",
+        annotation_text=f"Median Conversion %: {conv_threshold:.1f}",
         annotation_position="top"
     )
     
     # Add quadrant labels
-    max_x = filtered_df['avg_expected_value'].max()
+    max_x = filtered_df['conversion_rate'].max()
     max_y = filtered_df['overall_sdq'].max()
-    min_x = filtered_df['avg_expected_value'].min()
+    min_x = filtered_df['conversion_rate'].min()
     min_y = filtered_df['overall_sdq'].min()
     
     quadrant_annotations = [
-        dict(x=max_x * 0.85, y=max_y * 0.95, text="Elite Shots<br>🌟", showarrow=False, font=dict(size=12, color="green")),
-        dict(x=min_x * 1.15, y=max_y * 0.95, text="Making the Most<br>💪", showarrow=False, font=dict(size=12, color="blue")),
-        dict(x=max_x * 0.85, y=min_y * 1.05, text="Wasted Opportunities<br>⚠️", showarrow=False, font=dict(size=12, color="orange")),
-        dict(x=min_x * 1.15, y=min_y * 1.05, text="Forced Shots<br>🚫", showarrow=False, font=dict(size=12, color="red"))
+        dict(x=max_x * 0.85, y=max_y * 0.95, text="Elite Shots<br>", showarrow=False, font=dict(size=12, color="green")),
+        dict(x=min_x * 1.15, y=max_y * 0.95, text="Making the Most<br>", showarrow=False, font=dict(size=12, color="blue")),
+        dict(x=max_x * 0.85, y=min_y * 1.05, text="Wasted Opportunities<br>", showarrow=False, font=dict(size=12, color="orange")),
+        dict(x=min_x * 1.15, y=min_y * 1.05, text="Forced Shots<br>", showarrow=False, font=dict(size=12, color="red"))
     ]
     
     fig_scatter.update_layout(
-        title='Shot Decision Quality vs Expected Value - Bundesliga 2023/24',
-        xaxis_title='Expected Value (xG-like metric, 0-100)',
+        title='Shot Decision Quality vs Conversion Rate - Bundesliga 2023/24',
+        xaxis_title='Conversion Rate (%)',
         yaxis_title='Shot Decision Quality (SDQ, 0-100)',
         height=700,
         hovermode='closest',
@@ -666,24 +600,24 @@ with tab3:
     st.subheader("🔍 Key Insights")
     
     # Calculate quadrant populations
-    q1 = len(filtered_df[(filtered_df['avg_expected_value'] >= xg_threshold) & (filtered_df['overall_sdq'] >= sdq_threshold)])
-    q2 = len(filtered_df[(filtered_df['avg_expected_value'] < xg_threshold) & (filtered_df['overall_sdq'] >= sdq_threshold)])
-    q3 = len(filtered_df[(filtered_df['avg_expected_value'] < xg_threshold) & (filtered_df['overall_sdq'] < sdq_threshold)])
-    q4 = len(filtered_df[(filtered_df['avg_expected_value'] >= xg_threshold) & (filtered_df['overall_sdq'] < sdq_threshold)])
+    q1 = len(filtered_df[(filtered_df['conversion_rate'] >= conv_threshold) & (filtered_df['overall_sdq'] >= sdq_threshold)])
+    q2 = len(filtered_df[(filtered_df['conversion_rate'] < conv_threshold) & (filtered_df['overall_sdq'] >= sdq_threshold)])
+    q3 = len(filtered_df[(filtered_df['conversion_rate'] < conv_threshold) & (filtered_df['overall_sdq'] < sdq_threshold)])
+    q4 = len(filtered_df[(filtered_df['conversion_rate'] >= conv_threshold) & (filtered_df['overall_sdq'] < sdq_threshold)])
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("🌟 Elite Shots", q1, help="High xG + High SDQ")
+        st.metric("Elite Shots", q1, help="High Conversion % + High SDQ")
     
     with col2:
-        st.metric("💪 Making the Most", q2, help="Low xG + High SDQ")
+        st.metric("Making the Most", q2, help="Low Conversion % + High SDQ")
     
     with col3:
-        st.metric("⚠️ Wasted Opportunities", q4, help="High xG + Low SDQ")
+        st.metric("Wasted Opportunities", q4, help="High Conversion % + Low SDQ")
     
     with col4:
-        st.metric("🚫 Forced Shots", q3, help="Low xG + Low SDQ")
+        st.metric("Forced Shots", q3, help="Low Conversion % + Low SDQ")
     
     # Top performers in each quadrant
     st.markdown("### Top 3 Players in Each Quadrant")
@@ -692,59 +626,45 @@ with tab3:
     
     with col1:
         # Elite Shots (Q1)
-        q1_players = filtered_df[(filtered_df['avg_expected_value'] >= xg_threshold) & 
+        q1_players = filtered_df[(filtered_df['conversion_rate'] >= conv_threshold) & 
                                  (filtered_df['overall_sdq'] >= sdq_threshold)].nlargest(3, 'overall_sdq')
-        st.markdown("**🌟 Elite Shots (High xG + High SDQ)**")
+        st.markdown("**Elite Shots (High Conversion % + High SDQ)**")
         if len(q1_players) > 0:
             for idx, player in q1_players.iterrows():
-                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, xG: {player['avg_expected_value']:.1f}")
+                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, Conversion %: {player['conversion_rate']:.1f}")
         else:
             st.write("No players in this quadrant")
         
         # Forced Shots (Q3)
-        q3_players = filtered_df[(filtered_df['avg_expected_value'] < xg_threshold) & 
+        q3_players = filtered_df[(filtered_df['conversion_rate'] < conv_threshold) & 
                                  (filtered_df['overall_sdq'] < sdq_threshold)].nsmallest(3, 'overall_sdq')
-        st.markdown("**🚫 Forced Shots (Low xG + Low SDQ)**")
+        st.markdown("**Forced Shots (Low Conversion % + Low SDQ)**")
         if len(q3_players) > 0:
             for idx, player in q3_players.iterrows():
-                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, xG: {player['avg_expected_value']:.1f}")
+                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, Conversion %: {player['conversion_rate']:.1f}")
         else:
             st.write("No players in this quadrant")
     
     with col2:
         # Making the Most (Q2)
-        q2_players = filtered_df[(filtered_df['avg_expected_value'] < xg_threshold) & 
+        q2_players = filtered_df[(filtered_df['conversion_rate'] < conv_threshold) & 
                                  (filtered_df['overall_sdq'] >= sdq_threshold)].nlargest(3, 'overall_sdq')
-        st.markdown("**💪 Making the Most (Low xG + High SDQ)**")
+        st.markdown("**Making the Most (Low Conversion % + High SDQ)**")
         if len(q2_players) > 0:
             for idx, player in q2_players.iterrows():
-                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, xG: {player['avg_expected_value']:.1f}")
+                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, Conversion %: {player['conversion_rate']:.1f}")
         else:
             st.write("No players in this quadrant")
         
         # Wasted Opportunities (Q4)
-        q4_players = filtered_df[(filtered_df['avg_expected_value'] >= xg_threshold) & 
+        q4_players = filtered_df[(filtered_df['conversion_rate'] >= conv_threshold) & 
                                  (filtered_df['overall_sdq'] < sdq_threshold)].nsmallest(3, 'overall_sdq')
-        st.markdown("**⚠️ Wasted Opportunities (High xG + Low SDQ)**")
+        st.markdown("**Wasted Opportunities (High Conversion % + Low SDQ)**")
         if len(q4_players) > 0:
             for idx, player in q4_players.iterrows():
-                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, xG: {player['avg_expected_value']:.1f}")
+                st.write(f"{player['player_name']} - SDQ: {player['overall_sdq']:.1f}, Conversion %: {player['conversion_rate']:.1f}")
         else:
             st.write("No players in this quadrant")
-    
-    # Correlation analysis
-    st.markdown("---")
-    st.subheader("📊 Correlation Analysis")
-    
-    correlation = filtered_df['overall_sdq'].corr(filtered_df['avg_expected_value'])
-    st.write(f"**Correlation between SDQ and Expected Value:** {correlation:.3f}")
-    
-    if correlation > 0.7:
-        st.info("Strong positive correlation - Players with better positions tend to execute better.")
-    elif correlation > 0.3:
-        st.info("Moderate positive correlation - Some relationship between position quality and execution.")
-    else:
-        st.success("Weak correlation - SDQ captures different dimensions than traditional xG metrics!")
 
 # ============================================================================
 # FOOTER
