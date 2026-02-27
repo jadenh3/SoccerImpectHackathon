@@ -49,3 +49,7 @@ This differs from a stat like expected goals (xG) as xG measures the probability
 ### Option B: Transparent Player Valuation Metric
 Define an interpretable attacking or defensive metric using event data. Create a metric definition, produce a leaderboard comparing players, present a case study, and discuss limitations.
 
+
+## AI Usage:
+AI was used as a minor helper in the ideation of SDQ as well as partly in the creation of the dashboard. 
+
