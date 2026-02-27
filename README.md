@@ -8,7 +8,7 @@
 
 This repository outlines our starter code for our shot decision quality metric. We used a variety of different attacking features such as shot angle, trajectory, position, and shot speed to determine the metric. Shot deciison quality (SDQ) can be used to determine what makes a "good" shot, with it being given a quantitative value on our own scale. 
 
-This differs from a stat like expected goals (xG) as xG measures the probability of a shot ending up in a goal, whilst SDQ measures the quality of the decision to shoot. xG helps to answer the question "How likely is this shot to end up in a goal" versus SDQ helps to answer "Was taking this shot the right decision".
+This differs from a stat like expected goals (xG) as xG measures the probability of a shot ending up in a goal, whilst SDQ measures the quality of the decision to shoot. Expected Goals helps to answer the question "How likely is this shot to end up in a goal?" On the other hand, SDQ helps to answer "Was taking this shot the right decision?"
 
 ## Team Members
 
@@ -41,15 +41,10 @@ This differs from a stat like expected goals (xG) as xG measures the probability
 - Kloppy, pandas, mplsoccer, matplotlib
 
 
-## Challenge Prompts (Choose One)
- 
-- Create the slideshow
-
-
-### Option B: Transparent Player Valuation Metric
+### Prompt: Transparent Player Valuation Metric
 Define an interpretable attacking or defensive metric using event data. Create a metric definition, produce a leaderboard comparing players, present a case study, and discuss limitations.
 
 
 ## AI Usage:
-AI was used as a minor helper in the ideation of SDQ as well as partly in the creation of the dashboard. 
+AI was used as a minor helper in the ideation of SDQ, deciding what features to use for feature engineering, and partly in the creation of the dashboard. 
 
