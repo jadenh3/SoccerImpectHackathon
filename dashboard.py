@@ -1,12 +1,3 @@
-"""
-Shot Decision Quality Dashboard
-Soccer Data Analytics Hackathon 2026
-Team: Big Goals Big Dreams
-
-Complete interactive dashboard for analyzing player Shot Decision Quality (SDQ)
-in Bundesliga 2023/24 season.
-"""
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -49,15 +40,8 @@ st.markdown("""
 def load_player_data():
     """
     Load player leaderboard data from SDQ calculations
-    
-    This uses your data pipeline:
-    - Loads all IMPECT shots
-    - Calculates SDQ for each shot
-    - Aggregates to player level
     """
     try:
-        # Import your actual data loading functions
-        # Make sure these files are in the same directory
         from data_loader import get_leaderboard
         
         # Load the leaderboard
@@ -94,11 +78,6 @@ def load_player_data():
 
 @st.cache_data
 def load_shot_level_data():
-    """
-    Load individual shot-level data for detailed analysis
-    
-    This would include all individual shots with coordinates, SDQ, etc.
-    """
     try:
         from data_loader import load_all_shots
         from shot_decision_quality import create_shot_analysis
@@ -414,8 +393,8 @@ with tab2:
         st.subheader("📊 Key Statistics Comparison")
         
         # Create metrics grid
-        metrics_to_show = ['overall_sdq', 'avg_expected_value', 'total_shots', 'goals', 'conversion_rate', 'consistency']
-        metric_names = ['SDQ Score', 'Expected Value', 'Total Shots', 'Goals', 'Conversion %', 'Consistency']
+        metrics_to_show = ['overall_sdq', 'total_shots', 'goals', 'conversion_rate', 'consistency']
+        metric_names = ['SDQ Score', 'Total Shots', 'Goals', 'Conversion %', 'Consistency']
         
         for metric, name in zip(metrics_to_show, metric_names):
             cols = st.columns(len(selected_players))
@@ -488,8 +467,8 @@ with tab2:
         # Detailed comparison table
         st.subheader("📋 Detailed Statistics")
         
-        detail_cols = ['player_name', 'team', 'position', 'overall_sdq', 'avg_expected_value',
-                       'total_shots', 'goals', 'conversion_rate', 'avg_distance', 'avg_angle',
+        detail_cols = ['player_name', 'team', 'position', 'overall_sdq','total_shots', 
+                       'goals', 'conversion_rate', 'avg_distance', 'avg_angle',
                        'avg_location_score', 'avg_pressure_score', 'avg_shot_type_score', 
                        'avg_timing_score', 'consistency']
         
