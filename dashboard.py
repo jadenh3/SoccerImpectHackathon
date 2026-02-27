@@ -245,12 +245,11 @@ with tab1:
     # Display table
     st.dataframe(
         table_df[['Rank', 'player_name', 'team', 'position', 'overall_sdq', 
-                 'avg_expected_value', 'total_shots', 'goals', 'conversion_rate']].rename(columns={
+                'total_shots', 'goals', 'conversion_rate']].rename(columns={
             'player_name': 'Player',
             'team': 'Team',
             'position': 'Position',
             'overall_sdq': 'SDQ',
-            'avg_expected_value': 'xG',
             'total_shots': 'Shots',
             'goals': 'Goals',
             'conversion_rate': 'Conv %'

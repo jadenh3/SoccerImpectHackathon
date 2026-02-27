@@ -1,8 +1,3 @@
-"""
-Data loader for SDQ Dashboard
-Uses only real IMPECT data - no fake data added
-"""
-
 from shot_decision_quality import create_shot_analysis, generate_shot_leaderboard
 from kloppy import impect
 import pandas as pd
